@@ -1,0 +1,5 @@
+# Resolve and hash-lock these dependencies into requirements.txt.
+fastapi
+mangum
+uvicorn
+boto3

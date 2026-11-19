@@ -1,0 +1,25 @@
+# Local environments, credentials and infrastructure state
+.venv/
+.env
+.env.*
+!.env.example
+.aws/
+.local/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+build/
+dist/
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfplan
+tfplan
+tfplan.json
+*.tfvars
+!*.tfvars.example
+crash.log
+# Commit .terraform.lock.hcl deliberately.
