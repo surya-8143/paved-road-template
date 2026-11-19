@@ -13,4 +13,4 @@ concurrency:
   cancel-in-progress: true
 jobs:
   supply-chain:
-    uses: surya-8143/paved-road-platform/.github/workflows/build-scan-sign.yml@1e72ac2709b01c2d0b105f055e23503d7264f8f0
+    uses: surya-8143/paved-road-platform/.github/workflows/build-scan-sign.yml@48a1185737433a535dd09b3d99d9d08e01e86c60
