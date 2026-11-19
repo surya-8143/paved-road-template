@@ -1,0 +1,16 @@
+name: Service CI
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+  packages: write
+  id-token: write
+concurrency:
+  group: service-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  supply-chain:
+    uses: surya-8143/paved-road-platform/.github/workflows/build-scan-sign.yml@1e72ac2709b01c2d0b105f055e23503d7264f8f0
