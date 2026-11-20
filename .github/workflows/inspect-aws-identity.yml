@@ -1,0 +1,47 @@
+name: Inspect AWS OIDC identity
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  inspect:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - name: Inspect allowlisted claims without logging the token
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import base64, json, os, urllib.parse, urllib.request
+          url = os.environ['ACTIONS_ID_TOKEN_REQUEST_URL']
+          url += ('&' if '?' in url else '?') + urllib.parse.urlencode({'audience': 'sts.amazonaws.com'})
+          request = urllib.request.Request(url, headers={'Authorization': 'Bearer ' + os.environ['ACTIONS_ID_TOKEN_REQUEST_TOKEN']})
+          with urllib.request.urlopen(request, timeout=30) as response:
+              token = json.load(response)['value']
+          claims = json.loads(base64.urlsafe_b64decode(token.split('.')[1] + '==='))
+          expected_ids = {'surya-8143/paved-road-demo-service': '1464870818', 'surya-8143/paved-road-template': '1464428547'}
+          repository = os.environ['GITHUB_REPOSITORY']
+          owner, name = repository.split('/')
+          expected = f'repo:{owner}@194671008/{name}@{expected_ids[repository]}:ref:refs/heads/main'
+          assert claims['iss'] == 'https://token.actions.githubusercontent.com'
+          assert claims['aud'] == 'sts.amazonaws.com'
+          assert claims['sub'] == expected and claims['ref'] == 'refs/heads/main'
+          assert claims['repository'] == repository and claims['repository_id'] == expected_ids[repository]
+          assert claims['repository_owner_id'] == '194671008'
+          assert claims['sha'] == os.environ['GITHUB_SHA']
+          safe = {key: claims[key] for key in ('iss','aud','sub','repository','repository_id','repository_owner_id','ref','sha','event_name')}
+          # This is claim inspection from GitHub's authenticated HTTPS endpoint,
+          # not an AWS STS authorization test. The bearer token is never emitted.
+          with open('oidc-claims.json', 'w') as output:
+              json.dump(safe, output, indent=2)
+          print(json.dumps(safe, indent=2))
+          PY
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+        with:
+          name: aws-oidc-claims
+          path: oidc-claims.json
+          retention-days: 7
