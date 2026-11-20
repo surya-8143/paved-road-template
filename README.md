@@ -2,7 +2,7 @@
 
 A small FastAPI service that runs as a non-root container or as a Python 3.12 AWS Lambda ZIP through Mangum. It is the application foundation for the Paved Road platform.
 
-**Current status:** tested locally. CI, vulnerability scanning, signing, infrastructure deployment and Kubernetes integration are not implemented yet. No AWS deployment is claimed.
+**Current status:** the public reusable CI pipeline has passed tests, native AMD64/ARM64 container scans, Lambda ZIP scanning, keyless signing and independent release verification. The generated demo runs through Argo CD with verified-image admission. Live AWS deployment is still blocked by account permissions and is not claimed.
 
 ## Run locally (Ubuntu/WSL, Python 3.12)
 
@@ -77,4 +77,4 @@ The helper resolves in a temporary native Linux directory and copies contents ba
 
 See [local verification evidence](docs/VERIFICATION.md). The test cache plugin is disabled to avoid DrvFS permission errors. Mangum 0.22.0 emits an upstream Python 3.12 event-loop deprecation warning when its adapter is initialized during test collection; the handler tests pass. The runtime remains pinned to Python 3.12 until newer runtime compatibility is verified.
 
-GitHub publication, supply-chain gates and AWS deployment are separate acceptance steps. The complete project checklist lives in the sibling `paved-road-platform` repository.
+See the [platform evidence](https://github.com/surya-8143/paved-road-platform/blob/main/docs/SUPPLY_CHAIN_EVIDENCE.md), [Kubernetes runbook](https://github.com/surya-8143/paved-road-platform/blob/main/docs/KUBERNETES.md), and [remaining acceptance checklist](https://github.com/surya-8143/paved-road-platform/blob/main/docs/PROJECT_STATUS.md). The cloud deployment and account-level cleanup steps remain unverified.
